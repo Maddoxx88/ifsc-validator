@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ifscValidator/details.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart' as alertCustom;
@@ -21,19 +22,6 @@ Future<bool> fetchIFSC(String ifscCode) async {
   }
 }
 
-class IFSC {
-  final String branch;
-  final String centre;
-  final String bank;
-
-  IFSC({this.branch, this.centre, this.bank});
-
-  factory IFSC.fromJson(Map<String, dynamic> json) {
-    return IFSC(
-        branch: json['BRANCH'], centre: json['CENTRE'], bank: json['BANK']);
-  }
-}
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -47,18 +35,47 @@ class _HomeState extends State<Home> {
   String currentPin;
   String currentPin2;
   String currentPin3;
+  String ifsc;
   final initFocus = FocusNode();
   final focus = FocusNode();
   final focus2 = FocusNode();
+
+  void _onAlertSuccess(context) {
+  alertCustom.Alert(
+      context: context,
+      title: 'IFSC Exists!',
+      desc: 'Click "Details" to know more',
+      image: Image.network(
+          'https://img.icons8.com/fluent/2x/verified-account.png'),
+      buttons: [
+        alertCustom.DialogButton(
+          child: Text('Details'),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => Details(ifscCode: ifsc),));
+          },
+          color: Colors.blue,
+        ),
+        alertCustom.DialogButton(
+          child: Text('Close'),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        )
+      ]).show();
+}
+
+void _onAlertError(context) {
+  alertCustom.Alert(
+    context: context,
+    title: 'Incorrect IFSC',
+    image: Image.network('https://img.icons8.com/color/2x/close-window.png'),
+  ).show();
+}
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Color(0xFf050505)
-          // gradient: LinearGradient(
-          //     begin: Alignment.topCenter,
-          //     end: Alignment.bottomCenter,
-          //     colors: [Color(0xFF5d68ad), Color(0xFFc324dc)])
           ),
       child: Form(
           key: _formKey,
@@ -78,6 +95,7 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 12),
                 PinCodeTextField(
+                  showCursor: false,
                   appContext: context,
                   length: 4,
                   autoFocus: true,
@@ -118,6 +136,8 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 20),
                 PinCodeTextField(
+                  showCursor: false,
+                  autoDismissKeyboard: false,
                   appContext: context,
                   focusNode: focus,
                   length: 4,
@@ -159,6 +179,7 @@ class _HomeState extends State<Home> {
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width / 10),
                   child: PinCodeTextField(
+                    showCursor: false,
                     validator: (val) => val.length < 2 ? '' : null,
                     appContext: context,
                     focusNode: focus2,
@@ -206,11 +227,11 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width / 30,
-                        vertical: MediaQuery.of(context).size.height / 45),
+                        horizontal: MediaQuery.of(context).size.width / 40,
+                        vertical: MediaQuery.of(context).size.height / 50),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
-                        String ifsc = currentPin + currentPin2 + currentPin3;
+                        ifsc = currentPin + currentPin2 + currentPin3;
                         dynamic result = await fetchIFSC(ifsc);
                         pinCode.clear();
                         pinCode2.clear();
@@ -225,7 +246,7 @@ class _HomeState extends State<Home> {
                     },
                     color: Colors.blueAccent[700],
                     textColor: Colors.white,
-                    child: Text("Check", style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w400)),
+                    child: Text("Check", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400)),
                   ),
                 ),
               ])),
@@ -233,31 +254,3 @@ class _HomeState extends State<Home> {
   }
 }
 
-void _onAlertSuccess(context) {
-  alertCustom.Alert(
-      context: context,
-      title: 'IFSC Exists!',
-      desc: 'Click "Details" to know more',
-      image: Image.network(
-          'https://img.icons8.com/fluent/2x/verified-account.png'),
-      buttons: [
-        alertCustom.DialogButton(
-          child: Text('Details'),
-          onPressed: null,
-          color: Colors.blue,
-        ),
-        alertCustom.DialogButton(
-          child: Text('Close'),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        )
-      ]).show();
-}
-
-void _onAlertError(context) {
-  alertCustom.Alert(
-    context: context,
-    title: 'Incorrect IFSC',
-    image: Image.network('https://img.icons8.com/color/2x/close-window.png'),
-  ).show();
-}
