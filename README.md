@@ -11,10 +11,6 @@
   </a>
 </p>
 
-#### Initial Widget on CodeAppRun:
-
-[![codeapprun.io](https://raw.githubusercontent.com/acervenky/codeapprunbadge/master/assets/car4.svg)](https://codeapprun.io/sharky/widget/aMzzTEMOwJ)
-
 ## Table of Contents
 
 - [Introduction](#introduction)
