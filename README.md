@@ -3,7 +3,7 @@
 <img src="https://drive.google.com/uc?export=view&id=1L8tt2OJ-UhmnlvETKo33y8CPE4pR0Qtl" width="450">
 </p>
 <p align="center">
-  An app to validate IFSC Codes using Razorpay API. Built with Flutter.
+  An app to validate IFSC Codes using Razorpay API. Built using Flutter.
 </p>
 <p align="center">
   <a href="https://drive.google.com/file/d/14YH0as9G5IMUiYc6Yd5Z-JDuuwQxiYK7/view?usp=sharing">
